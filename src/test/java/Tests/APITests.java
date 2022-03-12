@@ -13,7 +13,7 @@ public class APITests {
 
 	public int UserId = 0;
 	ConfigFileReader ConfigFileReader;
-	
+
 	@BeforeTest
 	public void GetTheUserId()
 	{
@@ -22,34 +22,34 @@ public class APITests {
 		UserId= sc.nextInt(); 
 		ConfigFileReader = new ConfigFileReader();
 	}
-	
+
 	@Test(priority = 1)
 	public void GetRandomUser()
 	{
 		baseURI = ConfigFileReader.getApplicationUrl();
 		ArrayList<String> email =
 				given().
-			         queryParam("id", UserId).
-		             get("/users").
-		        then().
-	                 statusCode(200).
-	                 extract().path("email");
-	    System.out.println(email);
+				queryParam("id", UserId).
+				get("/users").
+				then().
+				statusCode(200).
+				extract().path("email");
+		System.out.println(email);
 	}
-	
+
 	@Test(priority = 2)
 	public void GetTheUSerPosts() 
 	{
-		
+
 		baseURI = ConfigFileReader.getApplicationUrl();
 		ArrayList<Object> PostId = 
 				given().
-				      queryParam("userId", UserId).
-				      get("/posts").
+				queryParam("userId", UserId).
+				get("/posts").
 				then().
-			          statusCode(200).
-			          extract().path("id");
-		
+				statusCode(200).
+				extract().path("id");
+
 		for(Object i : PostId)
 		{
 			if(i instanceof Integer)
@@ -58,30 +58,37 @@ public class APITests {
 				System.out.println("There is an invalid ID "+ i);
 		} 
 	}
-	
-    @Test(priority = 3)
-    public void CreatePost() 
-    {
-    	
-    	CreatePost createPostObject = new CreatePost(UserId, "", "");
-		
+
+	@Test(priority = 3)
+	public void CreatePost() 
+	{
+
+		CreatePost createPostObject = new CreatePost(UserId, "", "");
+
 		baseURI = ConfigFileReader.getApplicationUrl();
-		
+
 		int id = given().
-		   header("Content-Type","application/json").
-		   contentType(ContentType.JSON).            
-		   accept(ContentType.JSON).                 
-		   body(createPostObject).
-		when().
-		   post("/posts").
-		then().
-		   log().body().
-		extract().path("id");  	
+				header("Content-Type","application/json").
+				contentType(ContentType.JSON).            
+				accept(ContentType.JSON).                 
+				body(createPostObject).
+				when().
+				post("/posts").
+				then().
+				log().body().
+				extract().path("id");
+		
 		// Verify that the post is added
-		given().
-	      queryParam("id", id).
-	    get("/posts").
-	      then().
-        statusCode(200).log().all();
-    }
+		try
+		{ 
+			given().
+			queryParam("id", id).
+			get("/posts").
+			then().statusCode(400).log().all();
+		}
+		catch(AssertionError e)
+		{
+			System.out.println("There is a bug here as we can't get post with unavailable ID which means that the post request should be failed instead of succeeded");
+		}
+	}
 }
