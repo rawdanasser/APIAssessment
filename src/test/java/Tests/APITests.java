@@ -1,6 +1,5 @@
 package Tests;
 
-
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import Data.ConfigFileReader;
@@ -22,7 +21,7 @@ public class APITests {
 		UserId= sc.nextInt(); 
 		ConfigFileReader = new ConfigFileReader();
 	}
-
+    // Test getting random user by his id and get his mail from the Response Body
 	@Test(priority = 1)
 	public void GetRandomUser()
 	{
@@ -36,7 +35,9 @@ public class APITests {
 				extract().path("email");
 		System.out.println(email);
 	}
-
+	/**********************************************************************************************************/
+	
+	// For the same user test getting his posts and validate if they have invalid PostIds
 	@Test(priority = 2)
 	public void GetTheUSerPosts() 
 	{
@@ -58,7 +59,9 @@ public class APITests {
 				System.out.println("There is an invalid ID "+ i);
 		} 
 	}
-
+	/**********************************************************************************************************/
+	
+	// Make Post by the same user with empty body and title
 	@Test(priority = 3)
 	public void CreatePost() 
 	{
